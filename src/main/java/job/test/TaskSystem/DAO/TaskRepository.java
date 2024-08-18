@@ -4,7 +4,9 @@ import job.test.TaskSystem.Model.Task;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface TaskRepository extends JpaRepository<Task, Long> {
-    public List<Task> findAllByAuthorEmail(String email);
+    List<Task> findAllByAuthorEmail(String email);
+    Optional<Task> findByIdAndAuthorEmail(Long id, String email);
 }

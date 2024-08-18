@@ -5,7 +5,9 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import job.test.TaskSystem.Model.Role;
 import job.test.TaskSystem.Model.User;
+import job.test.TaskSystem.Model.UserDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -45,6 +47,17 @@ public class JwtService {
             claims.put("role", customUserDetails.getRole());
         }
         return generateToken(claims, userDetails);
+    }
+
+    public UserDTO extractUser(String token){
+        Claims claims = extractAllClaims(token);
+
+        return UserDTO.builder()
+                .id(claims.get("id", Long.class))
+                .nickName(claims.getSubject())
+                .email(claims.get("email", String.class))
+                .role(claims.get("role", Role.class))
+                .build();
     }
 
     /**

@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.Optional;
 
 @Entity
 @Getter
@@ -29,13 +30,14 @@ public class Task {
     public String comment;
 
     public void loadFromDTO(TaskDTO dto){
-        author = dto.author.toEntity();
-        workers = dto.worker.stream()
-                .map(UserDTO::toEntity)
-                .toList();
-        title = dto.title;
-        status = dto.status;
-        comment = dto.comment;
+        Optional.ofNullable(dto.worker)
+                .ifPresent(workers -> this.workers = workers.stream()
+                        .map(UserDTO::toEntity)
+                        .toList());
+
+        Optional.ofNullable(dto.title).ifPresent(title -> this.title = title);
+        Optional.ofNullable(dto.status).ifPresent(status -> this.status = status);
+        Optional.ofNullable(dto.comment).ifPresent(comment -> this.comment = comment);
     }
 
     public TaskDTO toDTO(){
