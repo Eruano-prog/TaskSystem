@@ -16,10 +16,9 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
-
     public JwtTokenResponse signUp(SignUpRequest request){
         if (userService.existUserByEmail(request.getEmail())){
-            throw new EntityExistsException("");
+            throw new EntityExistsException("user already exists");
         }
 
         User user = User.builder()
@@ -47,6 +46,4 @@ public class AuthenticationService {
         var jwt = jwtService.generateToken(user);
         return new JwtTokenResponse(jwt);
     }
-
-
 }

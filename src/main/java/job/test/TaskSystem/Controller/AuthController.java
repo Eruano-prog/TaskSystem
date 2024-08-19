@@ -6,23 +6,20 @@ import job.test.TaskSystem.Model.SignInRequest;
 import job.test.TaskSystem.Service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/auth")
 @RequiredArgsConstructor
-public class UserController {
+public class AuthController {
     private final AuthenticationService authenticationService;
 
-    @PostMapping("/signUp")
+    @PostMapping()
     public ResponseEntity<JwtTokenResponse> signUp(@RequestBody SignUpRequest request){
         return ResponseEntity.ok(authenticationService.signUp(request));
     }
 
-    @PostMapping("/signIn")
+    @GetMapping()
     public ResponseEntity<JwtTokenResponse> signIn(@RequestBody SignInRequest request){
         return ResponseEntity.ok(authenticationService.signIn(request));
     }

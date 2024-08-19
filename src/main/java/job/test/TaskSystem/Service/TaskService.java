@@ -16,8 +16,8 @@ public class TaskService {
     private final TaskRepository taskRepository;
     private final UserService userService;
 
-    public List<TaskDTO> getAllAuthorTasks(String email) {
-        return taskRepository.findAllByAuthorEmail(email)
+    public List<TaskDTO> getAllAuthorTasks(UserDTO userDTO) {
+        return taskRepository.findAllByAuthorEmail(userDTO.getEmail())
                 .stream()
                 .map(Task::toDTO)
                 .toList();

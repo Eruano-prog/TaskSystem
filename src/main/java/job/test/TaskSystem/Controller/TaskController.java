@@ -24,17 +24,17 @@ public class TaskController {
         this.jwtService = jwtService;
     }
 
-    @GetMapping("/all")
+    @GetMapping()
     public ResponseEntity<List<TaskDTO>> tasks(@RequestHeader("Authorization") String authorizationHeader) {
         String token = extractJwtToken(authorizationHeader);
         if (token == null) return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
 
-        String username = jwtService.extractUserName(token);
+        UserDTO user = jwtService.extractUser(token);
 
-        return ResponseEntity.ok(taskService.getAllAuthorTasks(username));
+        return ResponseEntity.ok(taskService.getAllAuthorTasks(user));
     }
 
-    @PostMapping("/add")
+    @PostMapping()
     public ResponseEntity<TaskDTO> addTask(@RequestHeader("Authorization") String authorizationHeader, @RequestParam String title, @RequestParam String comment) {
         String token = extractJwtToken(authorizationHeader);
         if (token == null) return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
@@ -44,7 +44,7 @@ public class TaskController {
         return ResponseEntity.ok(taskService.addTask(user, title, comment));
     }
 
-    @PutMapping("/edit")
+    @PutMapping()
     public ResponseEntity<TaskDTO> editTask(@RequestHeader("Authorization") String authorizationHeader, @RequestParam Long taskID, @RequestParam String title, @RequestParam String comment) {
         String token = extractJwtToken(authorizationHeader);
         if (token == null) return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
@@ -54,7 +54,7 @@ public class TaskController {
         return ResponseEntity.ok(taskService.editTask(user, taskID, title, comment));
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping()
     public ResponseEntity<String> deleteTask(@RequestHeader("Authorization") String authorizationHeader, @RequestParam Long taskID) {
         String token = extractJwtToken(authorizationHeader);
         if (token == null) return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
@@ -75,7 +75,7 @@ public class TaskController {
         return ResponseEntity.ok(taskService.changeStatus(taskID, status, user));
     }
 
-    @PutMapping("/worker/add")
+    @PutMapping("/worker")
     public ResponseEntity<TaskDTO> addWorker(@RequestHeader("Authorization") String authorizationHeader, @RequestParam String email, @RequestParam Long taskID) {
         String token = extractJwtToken(authorizationHeader);
         if (token == null) return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
@@ -85,7 +85,7 @@ public class TaskController {
         return ResponseEntity.ok(taskService.addWorker(taskID, email, user));
     }
 
-    @PutMapping("/worker/remove")
+    @DeleteMapping("/worker")
     public ResponseEntity<TaskDTO> removeWorker(@RequestHeader("Authorization") String authorizationHeader, @RequestParam String email, @RequestParam Long taskID) {
         String token = extractJwtToken(authorizationHeader);
         if (token == null) return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
