@@ -10,7 +10,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +27,10 @@ public class TaskService {
 
     public Page<TaskDTO> getAllUserTasksByStatus(String email, TaskStatus status, Pageable pageable) {
         return taskRepository.findAllByAuthorEmailAndStatus(email, status, pageable).map(Task::toDTO);
+    }
+
+    public Page<TaskDTO> getAllUserTasksByPriority(String email, TaskPriority priority, Pageable pageable) {
+        return taskRepository.findAllByAuthorEmailAndPriority(email, priority, pageable).map(Task::toDTO);
     }
 
     public TaskDTO changeStatus(Long taskID, TaskStatus newStatus, UserDTO user){
@@ -79,7 +82,7 @@ public class TaskService {
     }
 
 
-    public TaskDTO addTask(UserDTO userDTO, String title, String comment) {
+    public TaskDTO addTask(UserDTO userDTO, String title, String comment, TaskPriority priority) {
         if (taskRepository.existsByTitleAndAuthorEmail(title, userDTO.getEmail())){
             throw new EntityExistsException("Task with this title already exists");
         }
@@ -90,9 +93,12 @@ public class TaskService {
                 .workers(new ArrayList<>())
                 .title(title)
                 .status(TaskStatus.Received)
+                .priority(priority)
                 .comment(comment)
                 .build();
 
         return taskRepository.save(task).toDTO();
     }
+
+
 }

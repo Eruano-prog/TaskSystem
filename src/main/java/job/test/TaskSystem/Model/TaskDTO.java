@@ -21,6 +21,7 @@ public class TaskDTO {
     public List<UserDTO> worker;
     public String title;
     public String status;
+    public String priority;
     public String comment;
 
     public Task toEntity(){
@@ -34,6 +35,7 @@ public class TaskDTO {
                         .orElse(null),
                 title,
                 Optional.ofNullable(status).map(TaskStatus::valueOf).orElse(null),
+                Optional.ofNullable(priority).map(TaskPriority::valueOf).orElse(null),
                 comment
         );
     }

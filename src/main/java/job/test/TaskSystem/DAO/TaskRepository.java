@@ -1,6 +1,7 @@
 package job.test.TaskSystem.DAO;
 
 import job.test.TaskSystem.Model.Task;
+import job.test.TaskSystem.Model.TaskPriority;
 import job.test.TaskSystem.Model.TaskStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,6 +12,7 @@ import java.util.Optional;
 public interface TaskRepository extends JpaRepository<Task, Long> {
     Page<Task> findAllByAuthorEmail(String email, Pageable pageable);
     Page<Task> findAllByAuthorEmailAndStatus(String email, TaskStatus status, Pageable pageable);
+    Page<Task> findAllByAuthorEmailAndPriority(String email, TaskPriority priority, Pageable pageable);
 
     Optional<Task> findByIdAndAuthorEmail(Long id, String email);
 

@@ -3,6 +3,7 @@ package job.test.TaskSystem.Controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import job.test.TaskSystem.Model.TaskDTO;
+import job.test.TaskSystem.Model.TaskPriority;
 import job.test.TaskSystem.Model.TaskStatus;
 import job.test.TaskSystem.Model.UserDTO;
 import job.test.TaskSystem.Service.JwtService;
@@ -47,15 +48,21 @@ public class TaskController {
         return ResponseEntity.ok(taskService.getAllUserTasksByStatus(email, status, pageable));
     }
 
+    @Operation(summary = "Получение всех задач пользователя по email с определённым приоритетом")
+    @GetMapping("/{email}/priority")
+    public ResponseEntity<Page<TaskDTO>> getTasksByEmailAndPriority(@PathVariable String email, @RequestParam TaskPriority priority, Pageable pageable) {
+        return ResponseEntity.ok(taskService.getAllUserTasksByPriority(email, priority, pageable));
+    }
+
     @Operation(summary = "Добавить задачу текущему пользователю")
     @PostMapping()
-    public ResponseEntity<TaskDTO> addTask(@RequestHeader("Authorization") String authorizationHeader, @RequestParam String title, @RequestParam String comment) {
+    public ResponseEntity<TaskDTO> addTask(@RequestHeader("Authorization") String authorizationHeader, @RequestParam String title, @RequestParam String comment, @RequestParam(name = "priority", required = false, defaultValue  = "Low") TaskPriority priority) {
         String token = extractJwtToken(authorizationHeader);
         if (token == null) return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
 
         UserDTO user = jwtService.extractUser(token);
 
-        return ResponseEntity.ok(taskService.addTask(user, title, comment));
+        return ResponseEntity.ok(taskService.addTask(user, title, comment, priority));
     }
 
     @Operation(summary = "Изменить заголовок или комментарий к задаче по её id")

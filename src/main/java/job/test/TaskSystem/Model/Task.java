@@ -26,6 +26,7 @@ public class Task {
 
     public String title;
     public TaskStatus status;
+    public TaskPriority priority;
     public String comment;
 
     public void loadFromDTO(TaskDTO dto){
@@ -48,6 +49,7 @@ public class Task {
                         .toList(),
                 title,
                 status.name(),
+                priority.name(),
                 comment
         );
     }
