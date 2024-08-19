@@ -1,5 +1,6 @@
-package job.test.TaskSystem.Service;
+package job.test.TaskSystem.Configuration;
 
+import job.test.TaskSystem.Service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

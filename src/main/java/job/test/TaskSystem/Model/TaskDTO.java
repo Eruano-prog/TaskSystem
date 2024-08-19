@@ -1,5 +1,6 @@
 package job.test.TaskSystem.Model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,6 +14,7 @@ import java.util.Optional;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(description = "Задача")
 public class TaskDTO {
     public Long id;
     public UserDTO author;

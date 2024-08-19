@@ -1,10 +1,11 @@
-package job.test.TaskSystem.Service;
+package job.test.TaskSystem.Configuration;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import job.test.TaskSystem.DAO.UserRepository;
+import job.test.TaskSystem.Service.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

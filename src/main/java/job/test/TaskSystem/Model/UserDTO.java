@@ -1,6 +1,7 @@
 package job.test.TaskSystem.Model;
 
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 @Getter
@@ -8,6 +9,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(description = "Пользователь")
 public class UserDTO {
     public Long id;
     public String nickName;

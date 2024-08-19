@@ -23,6 +23,13 @@ public class TaskService {
                 .toList();
     }
 
+    public List<TaskDTO> getAllUserTasks(String email) {
+        return taskRepository.findAllByAuthorEmail(email)
+                .stream()
+                .map(Task::toDTO)
+                .toList();
+    }
+
     public TaskDTO changeStatus(Long taskID, TaskStatus newStatus, UserDTO user){
         Task task = taskRepository.findByIdAndAuthorEmail(taskID, user.getEmail())
                 .orElseThrow(EntityNotFoundException::new);
