@@ -5,6 +5,8 @@ import jakarta.persistence.EntityNotFoundException;
 import job.test.TaskSystem.DAO.TaskRepository;
 import job.test.TaskSystem.Model.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -16,18 +18,16 @@ public class TaskService {
     private final TaskRepository taskRepository;
     private final UserService userService;
 
-    public List<TaskDTO> getAllAuthorTasks(UserDTO userDTO) {
-        return taskRepository.findAllByAuthorEmail(userDTO.getEmail())
-                .stream()
-                .map(Task::toDTO)
-                .toList();
+    public Page<TaskDTO> getAllAuthorTasks(UserDTO userDTO, Pageable pageable) {
+        return taskRepository.findAllByAuthorEmail(userDTO.getEmail(), pageable).map(Task::toDTO);
     }
 
-    public List<TaskDTO> getAllUserTasks(String email) {
-        return taskRepository.findAllByAuthorEmail(email)
-                .stream()
-                .map(Task::toDTO)
-                .toList();
+    public Page<TaskDTO> getAllUserTasks(String email, Pageable pageable) {
+        return taskRepository.findAllByAuthorEmail(email, pageable).map(Task::toDTO);
+    }
+
+    public Page<TaskDTO> getAllUserTasksByStatus(String email, TaskStatus status, Pageable pageable) {
+        return taskRepository.findAllByAuthorEmailAndStatus(email, status, pageable).map(Task::toDTO);
     }
 
     public TaskDTO changeStatus(Long taskID, TaskStatus newStatus, UserDTO user){

@@ -8,6 +8,8 @@ import job.test.TaskSystem.Model.UserDTO;
 import job.test.TaskSystem.Service.JwtService;
 import job.test.TaskSystem.Service.TaskService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,19 +26,25 @@ public class TaskController {
 
     @Operation(summary = "Получение всех задач текущего пользователя")
     @GetMapping()
-    public ResponseEntity<List<TaskDTO>> tasks(@RequestHeader("Authorization") String authorizationHeader) {
+    public ResponseEntity<Page<TaskDTO>> tasks(@RequestHeader("Authorization") String authorizationHeader, Pageable pageable) {
         String token = extractJwtToken(authorizationHeader);
-        if (token == null) return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        if (token == null) return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Page.empty());
 
         UserDTO user = jwtService.extractUser(token);
 
-        return ResponseEntity.ok(taskService.getAllAuthorTasks(user));
+        return ResponseEntity.ok(taskService.getAllAuthorTasks(user, pageable));
     }
 
     @Operation(summary = "Получение всех задач пользователя по email")
     @GetMapping("/{email}")
-    public ResponseEntity<List<TaskDTO>> getTasksByEmails(@PathVariable String email) {
-        return ResponseEntity.ok(taskService.getAllUserTasks(email));
+    public ResponseEntity<Page<TaskDTO>> getTasksByEmails(@PathVariable String email, Pageable pageable) {
+        return ResponseEntity.ok(taskService.getAllUserTasks(email, pageable));
+    }
+
+    @Operation(summary = "Получение всех задач пользователя по email с определённым статусом")
+    @GetMapping("/{email}/status")
+    public ResponseEntity<Page<TaskDTO>> getTasksByEmailAndStatus(@PathVariable String email, @RequestParam TaskStatus status, Pageable pageable) {
+        return ResponseEntity.ok(taskService.getAllUserTasksByStatus(email, status, pageable));
     }
 
     @Operation(summary = "Добавить задачу текущему пользователю")
