@@ -13,7 +13,7 @@ public class UserDTO {
     public String nickName;
     public String email;
     public String password;
-    public Role role;
+    public String role;
 
     public User toEntity (){
         return new User(

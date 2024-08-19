@@ -56,7 +56,7 @@ public class JwtService {
                 .id(claims.get("id", Long.class))
                 .nickName(claims.getSubject())
                 .email(claims.get("email", String.class))
-                .role(claims.get("role", Role.class))
+                .role(claims.get("role", String.class))
                 .build();
     }
 

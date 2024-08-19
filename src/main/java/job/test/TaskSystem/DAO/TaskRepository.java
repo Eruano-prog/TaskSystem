@@ -9,4 +9,5 @@ import java.util.Optional;
 public interface TaskRepository extends JpaRepository<Task, Long> {
     List<Task> findAllByAuthorEmail(String email);
     Optional<Task> findByIdAndAuthorEmail(Long id, String email);
+    Boolean existsByTitleAndAuthorEmail(String title, String email);
 }

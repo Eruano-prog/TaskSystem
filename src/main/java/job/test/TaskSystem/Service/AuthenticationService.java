@@ -26,7 +26,7 @@ public class AuthenticationService {
                 .nickname(request.getUsername())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.User)
+                .role("User")
                 .build();
 
         userService.save(user);

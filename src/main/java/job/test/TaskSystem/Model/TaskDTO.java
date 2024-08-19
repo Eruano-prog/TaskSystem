@@ -5,7 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Getter
 @Setter
@@ -16,18 +18,20 @@ public class TaskDTO {
     public UserDTO author;
     public List<UserDTO> worker;
     public String title;
-    public TaskStatus status;
+    public String status;
     public String comment;
 
     public Task toEntity(){
         return new Task(
                 id,
-                author.toEntity(),
-                worker.stream()
-                        .map(UserDTO::toEntity)
-                        .toList(),
+                Optional.ofNullable(author).map(UserDTO::toEntity).orElse(null),
+                Optional.ofNullable(worker)
+                        .map(list -> list.stream()
+                                .map(UserDTO::toEntity)
+                                .toList())
+                        .orElse(null),
                 title,
-                status,
+                Optional.ofNullable(status).map(TaskStatus::valueOf).orElse(null),
                 comment
         );
     }

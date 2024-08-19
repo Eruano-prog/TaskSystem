@@ -35,23 +35,23 @@ public class TaskController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<TaskDTO> addTask(@RequestHeader("Authorization") String authorizationHeader, @RequestBody TaskDTO taskDTO) {
+    public ResponseEntity<TaskDTO> addTask(@RequestHeader("Authorization") String authorizationHeader, @RequestParam String title, @RequestParam String comment) {
         String token = extractJwtToken(authorizationHeader);
         if (token == null) return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
 
         UserDTO user = jwtService.extractUser(token);
 
-        return ResponseEntity.ok(taskService.addTask(user, taskDTO));
+        return ResponseEntity.ok(taskService.addTask(user, title, comment));
     }
 
     @PutMapping("/edit")
-    public ResponseEntity<TaskDTO> editTask(@RequestHeader("Authorization") String authorizationHeader, @RequestBody TaskDTO taskDTO) {
+    public ResponseEntity<TaskDTO> editTask(@RequestHeader("Authorization") String authorizationHeader, @RequestParam Long taskID, @RequestParam String title, @RequestParam String comment) {
         String token = extractJwtToken(authorizationHeader);
         if (token == null) return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
 
         UserDTO user = jwtService.extractUser(token);
 
-        return ResponseEntity.ok(taskService.editTask(user, taskDTO));
+        return ResponseEntity.ok(taskService.editTask(user, taskID, title, comment));
     }
 
     @DeleteMapping("/delete")

@@ -1,10 +1,9 @@
 package job.test.TaskSystem.Model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,17 +11,19 @@ import java.util.Optional;
 @Entity
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Task {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "task_id_seq")
+    @SequenceGenerator(name = "task_id_seq", sequenceName = "task_id_seq", allocationSize = 1)
     public Long id;
 
-    @OneToOne
+    @ManyToOne
     public User author;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     public List<User> workers;
 
     public String title;
@@ -36,7 +37,7 @@ public class Task {
                         .toList());
 
         Optional.ofNullable(dto.title).ifPresent(title -> this.title = title);
-        Optional.ofNullable(dto.status).ifPresent(status -> this.status = status);
+        Optional.ofNullable(dto.status).ifPresent(status -> this.status = TaskStatus.valueOf(status));
         Optional.ofNullable(dto.comment).ifPresent(comment -> this.comment = comment);
     }
 
@@ -48,7 +49,7 @@ public class Task {
                         .map(User::toDTO)
                         .toList(),
                 title,
-                status,
+                status.name(),
                 comment
         );
     }
@@ -58,6 +59,6 @@ public class Task {
     }
 
     public void removeWorker(User worker){
-        this.workers.remove(worker);
+        this.workers.removeIf(lambda -> lambda.getId().equals(worker.getId()));
     }
 }

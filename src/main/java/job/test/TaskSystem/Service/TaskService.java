@@ -7,6 +7,7 @@ import job.test.TaskSystem.Model.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -60,26 +61,30 @@ public class TaskService {
         taskRepository.delete(task);
     }
 
-    public TaskDTO editTask(UserDTO userDTO, TaskDTO taskDTO){
-        Task task = taskRepository.findByIdAndAuthorEmail(taskDTO.id, userDTO.getEmail())
+    public TaskDTO editTask(UserDTO userDTO, Long taskID, String title, String comment){
+        Task task = taskRepository.findByIdAndAuthorEmail(taskID, userDTO.getEmail())
                 .orElseThrow(EntityNotFoundException::new);
 
-        task.loadFromDTO(taskDTO);
+        task.setTitle(title);
+        task.setComment(comment);
 
         return taskRepository.save(task).toDTO();
     }
 
 
-    public TaskDTO addTask(UserDTO userDTO, TaskDTO taskDTO) {
-        Task task = taskDTO.toEntity();
-
-        if (taskRepository.existsById(taskDTO.id)){
-            throw new EntityExistsException("Task already exists");
+    public TaskDTO addTask(UserDTO userDTO, String title, String comment) {
+        if (taskRepository.existsByTitleAndAuthorEmail(title, userDTO.getEmail())){
+            throw new EntityExistsException("Task with this title already exists");
         }
 
-        User author = userService.getUserByEmail(userDTO.getEmail());
-
-        task.setAuthor(author);
+        Task task = Task.builder()
+                .id(null)
+                .author(userService.getUserByEmail(userDTO.getEmail()))
+                .workers(new ArrayList<>())
+                .title(title)
+                .status(TaskStatus.Received)
+                .comment(comment)
+                .build();
 
         return taskRepository.save(task).toDTO();
     }
