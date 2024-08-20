@@ -62,7 +62,7 @@ public class TaskController {
             description = "Эндпоинт для получения всех задач пользователя по email. Возвращает страницу DTO задач пользователя."
     )
     @GetMapping("/{email}")
-    public ResponseEntity<Page<TaskDTO>> getTasksByEmails(@PathVariable String email, Pageable pageable) {
+    public ResponseEntity<Page<TaskDTO>> getTasksByAuthorEmails(@PathVariable String email, Pageable pageable) {
         return ResponseEntity.ok(taskService.getAllUserTasks(email, pageable));
     }
 
@@ -79,7 +79,7 @@ public class TaskController {
             description = "Эндпоинт для получения всех задач пользователя по email с определённым статусом. Возвращает страницу DTO задач пользователя с определённым статусом."
     )
     @GetMapping("/{email}/status")
-    public ResponseEntity<Page<TaskDTO>> getTasksByEmailAndStatus(@PathVariable String email,
+    public ResponseEntity<Page<TaskDTO>> getTasksByAuthorEmailAndStatus(@PathVariable String email,
                                                                   @RequestParam TaskStatus status,
                                                                   Pageable pageable)
     {
@@ -99,10 +99,65 @@ public class TaskController {
             description = "Эндпоинт для получения всех задач пользователя по email с определённым приоритетом. Возвращает страницу DTO задач пользователя с определённым приоритетом."
     )
     @GetMapping("/{email}/priority")
-    public ResponseEntity<Page<TaskDTO>> getTasksByEmailAndPriority(@PathVariable String email,
+    public ResponseEntity<Page<TaskDTO>> getTasksByAuthorEmailAndPriority(@PathVariable String email,
                                                                     @RequestParam TaskPriority priority, Pageable pageable)
     {
         return ResponseEntity.ok(taskService.getAllUserTasksByPriority(email, priority, pageable));
+    }
+
+    /**
+     * Получает все задачи пользователя по email.
+     *
+     * @param email    Email пользователя.
+     * @param pageable Параметры пагинации.
+     * @return Страница DTO задач пользователя.
+     */
+    @Operation(
+            summary = "Получение всех задач исполнителя по email",
+            description = "Эндпоинт для получения всех задач исполнителя по email. Возвращает страницу DTO задач пользователя."
+    )
+    @GetMapping("/worker/{email}")
+    public ResponseEntity<Page<TaskDTO>> getTasksByWorkerEmail(@PathVariable String email, Pageable pageable) {
+        return ResponseEntity.ok(taskService.getAllWorkerTasks(email, pageable));
+    }
+
+    /**
+     * Получает все задачи исполнителя по email с определённым статусом.
+     *
+     * @param email    Email пользователя.
+     * @param status   Статус задачи.
+     * @param pageable Параметры пагинации.
+     * @return Страница DTO задач пользователя с определённым статусом.
+     */
+    @Operation(
+            summary = "Получение всех задач исполнителя по email с определённым статусом",
+            description = "Эндпоинт для получения всех задач исполнителя по email с определённым статусом. Возвращает страницу DTO задач пользователя с определённым статусом."
+    )
+    @GetMapping("/worker/{email}/status")
+    public ResponseEntity<Page<TaskDTO>> getTasksByWorkerEmailAndStatus(@PathVariable String email,
+                                                                        @RequestParam TaskStatus status,
+                                                                        Pageable pageable)
+    {
+        return ResponseEntity.ok(taskService.getAllWorkerTasksByStatus(email, status, pageable));
+    }
+
+    /**
+     * Получает все задачи исполнителя по email с определённым приоритетом.
+     *
+     * @param email    Email пользователя.
+     * @param priority Приоритет задачи.
+     * @param pageable Параметры пагинации.
+     * @return Страница DTO задач пользователя с определённым приоритетом.
+     */
+    @Operation(
+            summary = "Получение всех задач исполнитемя по email с определённым приоритетом",
+            description = "Эндпоинт для получения всех задач исполнителя по email с определённым приоритетом. Возвращает страницу DTO задач пользователя с определённым приоритетом."
+    )
+    @GetMapping("/worker/{email}/priority")
+    public ResponseEntity<Page<TaskDTO>> getTasksByWorkerEmailAndPriority(@PathVariable String email,
+                                                                          @RequestParam TaskPriority priority, Pageable pageable)
+    {
+        return ResponseEntity.ok(taskService.getAllWorkerTasksByPriority(email, priority, pageable));
     }
 
     /**

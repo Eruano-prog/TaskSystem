@@ -18,6 +18,10 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     Page<Task> findAllByAuthorEmailAndStatus(String email, TaskStatus status, Pageable pageable);
     Page<Task> findAllByAuthorEmailAndPriority(String email, TaskPriority priority, Pageable pageable);
 
+    Page<Task> findAllByWorkersEmail(String email, Pageable pageable);
+    Page<Task> findAllByWorkersEmailAndPriority(String email, TaskPriority priority, Pageable pageable);
+    Page<Task> findAllByWorkersEmailAndStatus(String email, TaskStatus status, Pageable pageable);
+
     Optional<Task> findByIdAndAuthorEmail(Long id, String email);
 
     Boolean existsByTitleAndAuthorEmail(String title, String email);

@@ -31,7 +31,7 @@ public class AuthController {
             summary = "Регистрация нового пользователя",
             description = "Эндпоинт для регистрации нового пользователя. Возвращает JWT токен в случае успешной регистрации."
     )
-    @PostMapping("/signup")
+    @PostMapping("")
     public ResponseEntity<JwtTokenResponse> signUp(@RequestBody SignUpRequest request) {
         return ResponseEntity.ok(authenticationService.signUp(request));
     }
@@ -46,7 +46,7 @@ public class AuthController {
             summary = "Аутентификация пользователя",
             description = "Эндпоинт для аутентификации пользователя. Возвращает JWT токен в случае успешной аутентификации."
     )
-    @PostMapping("/signin")
+    @GetMapping("")
     public ResponseEntity<JwtTokenResponse> signIn(@RequestBody SignInRequest request) {
         return ResponseEntity.ok(authenticationService.signIn(request));
     }

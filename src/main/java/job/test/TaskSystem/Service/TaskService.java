@@ -7,7 +7,6 @@ import job.test.TaskSystem.Model.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -70,6 +69,39 @@ public class TaskService {
     }
 
     /**
+     * Получает страницу задач, исполнителем которой является пользователь с указанным email.
+     *
+     * @param email     Email пользователя, который является исполнителем задач.
+     * @param pageable  Параметры пагинации.
+     * @return Страница задач, созданных пользователем.
+     */
+    public Page<TaskDTO> getAllWorkerTasks(String email, Pageable pageable) {
+        return taskRepository.findAllByWorkersEmail(email, pageable).map(Task::toDTO);
+    }
+
+    /**
+     * Получает страницу задач с указанным статусом, исполнителем которой является пользователь с указанным email.
+     *
+     * @param email     Email пользователя, который является исполнителем задач.
+     * @param pageable  Параметры пагинации.
+     * @return Страница задач, созданных пользователем.
+     */
+    public Page<TaskDTO> getAllWorkerTasksByStatus(String email, TaskStatus status, Pageable pageable) {
+        return taskRepository.findAllByWorkersEmailAndStatus(email, status, pageable).map(Task::toDTO);
+    }
+
+    /**
+     * Получает страницу задач с указанным приоритетом, исполнителем которой является пользователь с указанным email.
+     *
+     * @param email     Email пользователя, который является исполнителем задач.
+     * @param pageable  Параметры пагинации.
+     * @return Страница задач, созданных пользователем.
+     */
+    public Page<TaskDTO> getAllWorkerTasksByPriority(String email, TaskPriority priority, Pageable pageable) {
+        return taskRepository.findAllByWorkersEmailAndPriority(email, priority, pageable).map(Task::toDTO);
+    }
+
+    /**
      * Изменяет статус задачи.
      *
      * @param taskID    ID задачи.
@@ -101,6 +133,11 @@ public class TaskService {
                 .orElseThrow(EntityNotFoundException::new);
 
         User newWorker = userService.getUserByEmail(newWorkerEmail);
+
+        if (task.getWorkers().stream()
+                .anyMatch(worker -> worker.getEmail().equals(newWorker.getEmail()))) {
+            throw new EntityExistsException("Worker " + newWorkerEmail + " already in workers list");
+        }
 
         task.addWorker(newWorker);
 
