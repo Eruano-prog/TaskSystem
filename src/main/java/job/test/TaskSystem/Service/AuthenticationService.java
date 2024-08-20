@@ -1,10 +1,13 @@
 package job.test.TaskSystem.Service;
 
 import jakarta.persistence.EntityExistsException;
+import jakarta.persistence.EntityNotFoundException;
 import job.test.TaskSystem.Model.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +30,7 @@ public class AuthenticationService {
      * @return JWT токен пользователя.
      * @throws EntityExistsException Если пользователь с указанным email уже существует.
      */
-    public JwtTokenResponse signUp(SignUpRequest request) {
+    public JwtTokenResponse signUp(SignUpRequest request) throws EntityExistsException {
         if (userService.existUserByEmail(request.getEmail())) {
             throw new EntityExistsException("User already exists");
         }
@@ -53,7 +56,7 @@ public class AuthenticationService {
      * @return JWT токен пользователя.
      * @throws org.springframework.security.core.AuthenticationException Если аутентификация не удалась.
      */
-    public JwtTokenResponse signIn(SignInRequest request) {
+    public JwtTokenResponse signIn(SignInRequest request) throws EntityNotFoundException, AuthenticationException {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 request.getEmail(),
                 request.getPassword()

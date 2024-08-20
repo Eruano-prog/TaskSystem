@@ -1,5 +1,6 @@
 package job.test.TaskSystem.Service;
 
+import jakarta.persistence.EntityNotFoundException;
 import job.test.TaskSystem.DAO.UserRepository;
 import job.test.TaskSystem.Model.*;
 import lombok.RequiredArgsConstructor;
@@ -25,9 +26,9 @@ public class UserService implements UserDetailsService {
      * @return Пользователь с указанным email.
      * @throws UsernameNotFoundException Если пользователь с указанным email не найден.
      */
-    public User getUserByEmail(String email) {
+    public User getUserByEmail(String email) throws EntityNotFoundException {
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
+                .orElseThrow(() -> new EntityNotFoundException("User not found with email: " + email));
     }
 
     /**
@@ -48,7 +49,7 @@ public class UserService implements UserDetailsService {
      * @throws UsernameNotFoundException Если пользователь с указанным именем пользователя не найден.
      */
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username) throws EntityNotFoundException {
         return getUserByEmail(username);
     }
 

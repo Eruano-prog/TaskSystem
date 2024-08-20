@@ -2,8 +2,6 @@ package job.test.TaskSystem.Controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import job.test.TaskSystem.Model.JwtTokenResponse;
 import job.test.TaskSystem.Model.SignUpRequest;
 import job.test.TaskSystem.Model.SignInRequest;

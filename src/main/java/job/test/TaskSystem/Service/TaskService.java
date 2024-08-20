@@ -7,6 +7,7 @@ import job.test.TaskSystem.Model.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -77,7 +78,7 @@ public class TaskService {
      * @return Обновленный DTO задачи.
      * @throws EntityNotFoundException Если задача не найдена.
      */
-    public TaskDTO changeStatus(Long taskID, TaskStatus newStatus, UserDTO user) {
+    public TaskDTO changeStatus(Long taskID, TaskStatus newStatus, UserDTO user) throws EntityNotFoundException {
         Task task = taskRepository.findByIdAndAuthorEmail(taskID, user.getEmail())
                 .orElseThrow(EntityNotFoundException::new);
 
@@ -95,7 +96,7 @@ public class TaskService {
      * @return Обновленный DTO задачи.
      * @throws EntityNotFoundException Если задача или работник не найдены.
      */
-    public TaskDTO addWorker(Long taskID, String newWorkerEmail, UserDTO user) {
+    public TaskDTO addWorker(Long taskID, String newWorkerEmail, UserDTO user) throws EntityNotFoundException {
         Task task = taskRepository.findByIdAndAuthorEmail(taskID, user.getEmail())
                 .orElseThrow(EntityNotFoundException::new);
 
@@ -115,7 +116,7 @@ public class TaskService {
      * @return Обновленный DTO задачи.
      * @throws EntityNotFoundException Если задача или работник не найдены.
      */
-    public TaskDTO removeWorker(Long taskID, String newWorkerEmail, UserDTO user) {
+    public TaskDTO removeWorker(Long taskID, String newWorkerEmail, UserDTO user) throws EntityNotFoundException {
         Task task = taskRepository.findByIdAndAuthorEmail(taskID, user.getEmail())
                 .orElseThrow(EntityNotFoundException::new);
 
@@ -133,7 +134,7 @@ public class TaskService {
      * @param taskID ID задачи.
      * @throws EntityNotFoundException Если задача не найдена.
      */
-    public void deleteTask(UserDTO user, Long taskID) {
+    public void deleteTask(UserDTO user, Long taskID) throws EntityNotFoundException {
         Task task = taskRepository.findByIdAndAuthorEmail(taskID, user.getEmail())
                 .orElseThrow(EntityNotFoundException::new);
 
@@ -150,7 +151,7 @@ public class TaskService {
      * @return Обновленный DTO задачи.
      * @throws EntityNotFoundException Если задача не найдена.
      */
-    public TaskDTO editTask(UserDTO userDTO, Long taskID, String title, String comment) {
+    public TaskDTO editTask(UserDTO userDTO, Long taskID, String title, String comment) throws EntityNotFoundException {
         Task task = taskRepository.findByIdAndAuthorEmail(taskID, userDTO.getEmail())
                 .orElseThrow(EntityNotFoundException::new);
 
@@ -170,7 +171,7 @@ public class TaskService {
      * @return DTO новой задачи.
      * @throws EntityExistsException Если задача с таким заголовком уже существует.
      */
-    public TaskDTO addTask(UserDTO userDTO, String title, String comment, TaskPriority priority) {
+    public TaskDTO addTask(UserDTO userDTO, String title, String comment, TaskPriority priority) throws EntityExistsException {
         if (taskRepository.existsByTitleAndAuthorEmail(title, userDTO.getEmail())) {
             throw new EntityExistsException("Task with this title already exists");
         }
