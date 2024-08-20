@@ -4,7 +4,6 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import job.test.TaskSystem.DAO.UserRepository;
 import job.test.TaskSystem.Service.JwtService;
 import job.test.TaskSystem.Service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +12,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -21,6 +19,10 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+/**
+ * Фильтр для обработки JWT токенов.
+ * Проверяет наличие и валидность JWT токена в заголовке запроса и устанавливает контекст безопасности, если токен валиден.
+ */
 @Component
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
@@ -29,6 +31,15 @@ public class JwtFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserService userService;
 
+    /**
+     * Обрабатывает входящий запрос, проверяет наличие и валидность JWT токена и устанавливает контекст безопасности.
+     *
+     * @param request      Входящий HTTP запрос.
+     * @param response     HTTP ответ.
+     * @param filterChain Цепочка фильтров.
+     * @throws ServletException Если возникает ошибка при обработке запроса.
+     * @throws IOException      Если возникает ошибка ввода-вывода.
+     */
     @Override
     protected void doFilterInternal(
             @NonNull HttpServletRequest request,

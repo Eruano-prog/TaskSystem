@@ -9,6 +9,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+/**
+ * Контроллер для обработки исключений.
+ * Предоставляет методы для обработки различных типов исключений и возврата соответствующих HTTP ответов.
+ */
 @RestControllerAdvice
 public class ExceptionController {
     @ExceptionHandler(EntityNotFoundException.class)

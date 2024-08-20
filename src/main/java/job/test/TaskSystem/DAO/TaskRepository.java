@@ -9,6 +9,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
+/**
+ * Репозиторий для работы с задачами.
+ * Предоставляет методы для выполнения стандартных CRUD операций и специфических запросов.
+ */
 public interface TaskRepository extends JpaRepository<Task, Long> {
     Page<Task> findAllByAuthorEmail(String email, Pageable pageable);
     Page<Task> findAllByAuthorEmailAndStatus(String email, TaskStatus status, Pageable pageable);

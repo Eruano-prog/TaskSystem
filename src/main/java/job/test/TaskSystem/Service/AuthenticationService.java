@@ -8,6 +8,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+/**
+ * Сервис для обеспечения идентификации и аутентификации пользователя.
+ * Предоставляет методы для регистрации новых пользователей и аутентификации существующих пользователей.
+ */
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
@@ -16,9 +20,16 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
-    public JwtTokenResponse signUp(SignUpRequest request){
-        if (userService.existUserByEmail(request.getEmail())){
-            throw new EntityExistsException("user already exists");
+    /**
+     * Регистрирует нового пользователя и возвращает его JWT токен.
+     *
+     * @param request Информация о новом пользователе.
+     * @return JWT токен пользователя.
+     * @throws EntityExistsException Если пользователь с указанным email уже существует.
+     */
+    public JwtTokenResponse signUp(SignUpRequest request) {
+        if (userService.existUserByEmail(request.getEmail())) {
+            throw new EntityExistsException("User already exists");
         }
 
         User user = User.builder()
@@ -35,6 +46,13 @@ public class AuthenticationService {
         return new JwtTokenResponse(jwt);
     }
 
+    /**
+     * Аутентифицирует пользователя и возвращает его JWT токен.
+     *
+     * @param request Информация для аутентификации пользователя.
+     * @return JWT токен пользователя.
+     * @throws org.springframework.security.core.AuthenticationException Если аутентификация не удалась.
+     */
     public JwtTokenResponse signIn(SignInRequest request) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 request.getEmail(),
@@ -43,7 +61,7 @@ public class AuthenticationService {
 
         User user = userService.getUserByEmail(request.getEmail());
 
-        var jwt = jwtService.generateToken(user);
+        String jwt = jwtService.generateToken(user);
         return new JwtTokenResponse(jwt);
     }
 }

@@ -5,7 +5,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import job.test.TaskSystem.Model.Role;
 import job.test.TaskSystem.Model.User;
 import job.test.TaskSystem.Model.UserDTO;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,26 +17,30 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+/**
+ * Сервис для работы с JWT токенами.
+ * Предоставляет методы для генерации, извлечения данных и проверки валидности токенов.
+ */
 @Service
 public class JwtService {
     @Value("${token.signing.key}")
     private String jwtSigningKey;
 
     /**
-     * Извлечение имени пользователя из токена
+     * Извлекает имя пользователя из токена.
      *
-     * @param token токен
-     * @return имя пользователя
+     * @param token JWT токен.
+     * @return Имя пользователя.
      */
     public String extractUserName(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
     /**
-     * Генерация токена
+     * Генерирует JWT токен для пользователя.
      *
-     * @param userDetails данные пользователя
-     * @return токен
+     * @param userDetails Данные пользователя.
+     * @return JWT токен.
      */
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
@@ -49,7 +52,13 @@ public class JwtService {
         return generateToken(claims, userDetails);
     }
 
-    public UserDTO extractUser(String token){
+    /**
+     * Извлекает данные пользователя из токена.
+     *
+     * @param token JWT токен.
+     * @return DTO пользователя со всеми данными из токена.
+     */
+    public UserDTO extractUser(String token) {
         Claims claims = extractAllClaims(token);
 
         return UserDTO.builder()
@@ -61,11 +70,11 @@ public class JwtService {
     }
 
     /**
-     * Проверка токена на валидность
+     * Проверяет валидность токена.
      *
-     * @param token       токен
-     * @param userDetails данные пользователя
-     * @return true, если токен валиден
+     * @param token       JWT токен.
+     * @param userDetails Данные пользователя.
+     * @return {@code true}, если токен валиден, иначе {@code false}.
      */
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String userName = extractUserName(token);
@@ -73,12 +82,12 @@ public class JwtService {
     }
 
     /**
-     * Извлечение данных из токена
+     * Извлекает данные из токена.
      *
-     * @param token           токен
-     * @param claimsResolvers функция извлечения данных
-     * @param <T>             тип данных
-     * @return данные
+     * @param token           JWT токен.
+     * @param claimsResolvers Функция извлечения данных.
+     * @param <T>             Тип данных.
+     * @return Данные.
      */
     private <T> T extractClaim(String token, Function<Claims, T> claimsResolvers) {
         final Claims claims = extractAllClaims(token);
@@ -86,11 +95,11 @@ public class JwtService {
     }
 
     /**
-     * Генерация токена
+     * Генерирует JWT токен с дополнительными данными.
      *
-     * @param extraClaims дополнительные данные
-     * @param userDetails данные пользователя
-     * @return токен
+     * @param extraClaims Дополнительные данные.
+     * @param userDetails Данные пользователя.
+     * @return JWT токен.
      */
     private String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
         return Jwts.builder().setClaims(extraClaims).setSubject(userDetails.getUsername())
@@ -100,39 +109,39 @@ public class JwtService {
     }
 
     /**
-     * Проверка токена на просроченность
+     * Проверяет, просрочен ли токен.
      *
-     * @param token токен
-     * @return true, если токен просрочен
+     * @param token JWT токен.
+     * @return {@code true}, если токен просрочен, иначе {@code false}.
      */
     private boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
 
     /**
-     * Извлечение даты истечения токена
+     * Извлекает дату истечения токена.
      *
-     * @param token токен
-     * @return дата истечения
+     * @param token JWT токен.
+     * @return Дата истечения.
      */
     private Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
 
     /**
-     * Извлечение всех данных из токена
+     * Извлекает все данные из токена.
      *
-     * @param token токен
-     * @return данные
+     * @param token JWT токен.
+     * @return Данные.
      */
     private Claims extractAllClaims(String token) {
         return Jwts.parser().setSigningKey(getSigningKey()).parseClaimsJws(token).getBody();
     }
 
     /**
-     * Получение ключа для подписи токена
+     * Получает ключ для подписи токена.
      *
-     * @return ключ
+     * @return Ключ.
      */
     private Key getSigningKey() {
         byte[] keyBytes = Decoders.BASE64.decode(jwtSigningKey);
