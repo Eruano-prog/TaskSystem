@@ -28,6 +28,7 @@ public class Task {
     public String title;
     public TaskStatus status;
     public TaskPriority priority;
+    @Column(length = 1000)
     public String comment;
 
     public void loadFromDTO(TaskDTO dto){
