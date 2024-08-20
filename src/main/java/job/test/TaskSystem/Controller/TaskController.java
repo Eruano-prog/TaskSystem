@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/task")
 @RequiredArgsConstructor
-@Tag(name = "Task Controller", description = "Controller provides API to interact with tasks")
+@Tag(name = "Task Controller", description = "Контроллер для управления задачами. Предоставляет API для взаимодействия с задачами, включая получение, добавление, редактирование и удаление задач.")
 public class TaskController {
     private final TaskService taskService;
     private final JwtService jwtService;
@@ -34,9 +34,14 @@ public class TaskController {
      * @param pageable            Параметры пагинации.
      * @return Страница DTO задач текущего пользователя.
      */
-    @Operation(summary = "Получение всех задач текущего пользователя")
+    @Operation(
+            summary = "Получение всех задач текущего пользователя",
+            description = "Эндпоинт для получения всех задач текущего пользователя. Возвращает страницу DTO задач текущего пользователя."
+    )
     @GetMapping()
-    public ResponseEntity<Page<TaskDTO>> getTasksOfCurrentUser(@RequestHeader("Authorization") String authorizationHeader, Pageable pageable) {
+    public ResponseEntity<Page<TaskDTO>> getTasksOfCurrentUser(@RequestHeader("Authorization") String authorizationHeader,
+                                                               Pageable pageable)
+    {
         String token = extractJwtToken(authorizationHeader);
         if (token == null) return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Page.empty());
 
@@ -52,7 +57,10 @@ public class TaskController {
      * @param pageable Параметры пагинации.
      * @return Страница DTO задач пользователя.
      */
-    @Operation(summary = "Получение всех задач пользователя по email")
+    @Operation(
+            summary = "Получение всех задач пользователя по email",
+            description = "Эндпоинт для получения всех задач пользователя по email. Возвращает страницу DTO задач пользователя."
+    )
     @GetMapping("/{email}")
     public ResponseEntity<Page<TaskDTO>> getTasksByEmails(@PathVariable String email, Pageable pageable) {
         return ResponseEntity.ok(taskService.getAllUserTasks(email, pageable));
@@ -66,9 +74,15 @@ public class TaskController {
      * @param pageable Параметры пагинации.
      * @return Страница DTO задач пользователя с определённым статусом.
      */
-    @Operation(summary = "Получение всех задач пользователя по email с определённым статусом")
+    @Operation(
+            summary = "Получение всех задач пользователя по email с определённым статусом",
+            description = "Эндпоинт для получения всех задач пользователя по email с определённым статусом. Возвращает страницу DTO задач пользователя с определённым статусом."
+    )
     @GetMapping("/{email}/status")
-    public ResponseEntity<Page<TaskDTO>> getTasksByEmailAndStatus(@PathVariable String email, @RequestParam TaskStatus status, Pageable pageable) {
+    public ResponseEntity<Page<TaskDTO>> getTasksByEmailAndStatus(@PathVariable String email,
+                                                                  @RequestParam TaskStatus status,
+                                                                  Pageable pageable)
+    {
         return ResponseEntity.ok(taskService.getAllUserTasksByStatus(email, status, pageable));
     }
 
@@ -80,9 +94,14 @@ public class TaskController {
      * @param pageable Параметры пагинации.
      * @return Страница DTO задач пользователя с определённым приоритетом.
      */
-    @Operation(summary = "Получение всех задач пользователя по email с определённым приоритетом")
+    @Operation(
+            summary = "Получение всех задач пользователя по email с определённым приоритетом",
+            description = "Эндпоинт для получения всех задач пользователя по email с определённым приоритетом. Возвращает страницу DTO задач пользователя с определённым приоритетом."
+    )
     @GetMapping("/{email}/priority")
-    public ResponseEntity<Page<TaskDTO>> getTasksByEmailAndPriority(@PathVariable String email, @RequestParam TaskPriority priority, Pageable pageable) {
+    public ResponseEntity<Page<TaskDTO>> getTasksByEmailAndPriority(@PathVariable String email,
+                                                                    @RequestParam TaskPriority priority, Pageable pageable)
+    {
         return ResponseEntity.ok(taskService.getAllUserTasksByPriority(email, priority, pageable));
     }
 
@@ -95,9 +114,16 @@ public class TaskController {
      * @param priority            Приоритет задачи.
      * @return DTO новой задачи.
      */
-    @Operation(summary = "Добавить задачу текущему пользователю")
+    @Operation(
+            summary = "Добавить задачу текущему пользователю",
+            description = "Эндпоинт для добавления задачи текущему пользователю. Возвращает DTO новой задачи."
+    )
     @PostMapping()
-    public ResponseEntity<TaskDTO> addTask(@RequestHeader("Authorization") String authorizationHeader, @RequestParam String title, @RequestParam String comment, @RequestParam(name = "priority", required = false, defaultValue = "Low") TaskPriority priority) {
+    public ResponseEntity<TaskDTO> addTask(@RequestHeader("Authorization") String authorizationHeader,
+                                           @RequestParam String title,
+                                           @RequestParam String comment,
+                                           @RequestParam(name = "priority", required = false, defaultValue = "Low") TaskPriority priority)
+    {
         String token = extractJwtToken(authorizationHeader);
         if (token == null) return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
 
@@ -115,9 +141,16 @@ public class TaskController {
      * @param comment             Новый комментарий к задаче.
      * @return Обновленный DTO задачи.
      */
-    @Operation(summary = "Изменить заголовок или комментарий к задаче по её ID")
+    @Operation(
+            summary = "Изменить заголовок или комментарий к задаче по её ID",
+            description = "Эндпоинт для изменения заголовка или комментария к задаче по её ID. Возвращает обновленный DTO задачи."
+    )
     @PutMapping()
-    public ResponseEntity<TaskDTO> editTask(@RequestHeader("Authorization") String authorizationHeader, @RequestParam Long taskID, @RequestParam String title, @RequestParam String comment) {
+    public ResponseEntity<TaskDTO> editTask(@RequestHeader("Authorization") String authorizationHeader,
+                                            @RequestParam Long taskID,
+                                            @RequestParam String title,
+                                            @RequestParam String comment)
+    {
         String token = extractJwtToken(authorizationHeader);
         if (token == null) return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
 
@@ -133,9 +166,15 @@ public class TaskController {
      * @param taskID              ID задачи.
      * @return Сообщение об успешном удалении задачи.
      */
-    @Operation(summary = "Удалить задачу по её ID")
+    @Operation(
+            summary = "Удалить задачу по её ID",
+            description = "Эндпоинт для удаления задачи по её ID. Возвращает сообщение об успешном удалении задачи."
+    )
     @DeleteMapping()
-    public ResponseEntity<String> deleteTask(@RequestHeader("Authorization") String authorizationHeader, @RequestParam Long taskID) {
+    public ResponseEntity<String> deleteTask(@RequestHeader("Authorization") String authorizationHeader,
+                                             @RequestParam Long taskID)
+
+    {
         String token = extractJwtToken(authorizationHeader);
         if (token == null) return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
 
@@ -153,9 +192,15 @@ public class TaskController {
      * @param status              Новый статус задачи.
      * @return Обновленный DTO задачи.
      */
-    @Operation(summary = "Изменить статус задачи по её ID")
+    @Operation(
+            summary = "Изменить статус задачи по её ID",
+            description = "Эндпоинт для изменения статуса задачи по её ID. Возвращает обновленный DTO задачи."
+    )
     @PutMapping("/status")
-    public ResponseEntity<TaskDTO> updateTaskStatus(@RequestHeader("Authorization") String authorizationHeader, @RequestParam Long taskID, @RequestParam TaskStatus status) {
+    public ResponseEntity<TaskDTO> updateTaskStatus(@RequestHeader("Authorization") String authorizationHeader,
+                                                    @RequestParam Long taskID,
+                                                    @RequestParam TaskStatus status)
+    {
         String token = extractJwtToken(authorizationHeader);
         if (token == null) return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
 
@@ -172,9 +217,15 @@ public class TaskController {
      * @param taskID              ID задачи.
      * @return Обновленный DTO задачи.
      */
-    @Operation(summary = "Добавить исполнителя к задаче по её ID")
+    @Operation(
+            summary = "Добавить исполнителя к задаче по её ID",
+            description = "Эндпоинт для добавления исполнителя к задаче по её ID. Возвращает обновленный DTO задачи."
+    )
     @PutMapping("/worker")
-    public ResponseEntity<TaskDTO> addWorker(@RequestHeader("Authorization") String authorizationHeader, @RequestParam String email, @RequestParam Long taskID) {
+    public ResponseEntity<TaskDTO> addWorker(@RequestHeader("Authorization") String authorizationHeader,
+                                             @RequestParam String email,
+                                             @RequestParam Long taskID)
+    {
         String token = extractJwtToken(authorizationHeader);
         if (token == null) return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
 
@@ -191,9 +242,15 @@ public class TaskController {
      * @param taskID              ID задачи.
      * @return Обновленный DTO задачи.
      */
-    @Operation(summary = "Удалить исполнителя из задачи по её ID")
+    @Operation(
+            summary = "Удалить исполнителя из задачи по её ID",
+            description = "Эндпоинт для удаления исполнителя из задачи по её ID. Возвращает обновленный DTO задачи."
+    )
     @DeleteMapping("/worker")
-    public ResponseEntity<TaskDTO> removeWorker(@RequestHeader("Authorization") String authorizationHeader, @RequestParam String email, @RequestParam Long taskID) {
+    public ResponseEntity<TaskDTO> removeWorker(@RequestHeader("Authorization") String authorizationHeader,
+                                                @RequestParam String email,
+                                                @RequestParam Long taskID)
+    {
         String token = extractJwtToken(authorizationHeader);
         if (token == null) return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
 
