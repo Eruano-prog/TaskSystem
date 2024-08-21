@@ -1,8 +1,9 @@
 package job.test.TaskSystem.Controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
@@ -47,8 +48,9 @@ public class TaskController {
             description = "Эндпоинт для получения всех задач текущего пользователя. Возвращает страницу DTO задач текущего пользователя."
     )
     @GetMapping()
-    public ResponseEntity<Page<TaskDTO>> getTasksOfCurrentUser(@RequestHeader("Authorization") String authorizationHeader,
-                                                               Pageable pageable)
+    public ResponseEntity<Page<TaskDTO>> getTasksOfCurrentUser(
+            @RequestHeader("Authorization") @Parameter(description = "Заголовок авторизации с JWT токеном") String authorizationHeader,
+            Pageable pageable)
     {
         String token = extractJwtToken(authorizationHeader);
         if (token == null) return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Page.empty());
@@ -70,8 +72,9 @@ public class TaskController {
             description = "Эндпоинт для получения всех задач пользователя по email. Возвращает страницу DTO задач пользователя."
     )
     @GetMapping("/{email}")
-    public ResponseEntity<Page<TaskDTO>> getTasksByAuthorEmails(@PathVariable @Email(message = "Invalid email format") @Size(max = 255, message = "email can`t be more than 255 long") String email,
-                                                                Pageable pageable) {
+    public ResponseEntity<Page<TaskDTO>> getTasksByAuthorEmails(
+            @PathVariable @Email(message = "Invalid email format") @Size(max = 255, message = "email can`t be more than 255 long") @Parameter(description = "Email пользователя") String email,
+            Pageable pageable) {
         return ResponseEntity.ok(taskService.getAllUserTasks(email, pageable));
     }
 
@@ -88,9 +91,10 @@ public class TaskController {
             description = "Эндпоинт для получения всех задач пользователя по email с определённым статусом. Возвращает страницу DTO задач пользователя с определённым статусом."
     )
     @GetMapping("/{email}/status")
-    public ResponseEntity<Page<TaskDTO>> getTasksByAuthorEmailAndStatus(@PathVariable @Email(message = "Invalid email format") @Size(max = 255, message = "email can`t be more than 255 long")  String email,
-                                                                        @RequestParam TaskStatus status,
-                                                                        Pageable pageable)
+    public ResponseEntity<Page<TaskDTO>> getTasksByAuthorEmailAndStatus(
+            @PathVariable @Email(message = "Invalid email format") @Size(max = 255, message = "email can`t be more than 255 long") @Parameter(description = "Email пользователя") String email,
+            @RequestParam @Parameter(description = "Статус задачи") TaskStatus status,
+            Pageable pageable)
     {
         return ResponseEntity.ok(taskService.getAllUserTasksByStatus(email, status, pageable));
     }
@@ -108,8 +112,10 @@ public class TaskController {
             description = "Эндпоинт для получения всех задач пользователя по email с определённым приоритетом. Возвращает страницу DTO задач пользователя с определённым приоритетом."
     )
     @GetMapping("/{email}/priority")
-    public ResponseEntity<Page<TaskDTO>> getTasksByAuthorEmailAndPriority(@PathVariable @Email(message = "Invalid email format") @Size(max = 255, message = "email can`t be more than 255 long")  String email,
-                                                                          @RequestParam TaskPriority priority, Pageable pageable)
+    public ResponseEntity<Page<TaskDTO>> getTasksByAuthorEmailAndPriority(
+            @PathVariable @Email(message = "Invalid email format") @Size(max = 255, message = "email can`t be more than 255 long") @Parameter(description = "Email пользователя") String email,
+            @RequestParam @Parameter(description = "Приоритет задачи") TaskPriority priority,
+            Pageable pageable)
     {
         return ResponseEntity.ok(taskService.getAllUserTasksByPriority(email, priority, pageable));
     }
@@ -126,7 +132,9 @@ public class TaskController {
             description = "Эндпоинт для получения всех задач исполнителя по email. Возвращает страницу DTO задач пользователя."
     )
     @GetMapping("/worker/{email}")
-    public ResponseEntity<Page<TaskDTO>> getTasksByWorkerEmail(@PathVariable @Email(message = "Invalid email format") @Size(max = 255, message = "email can`t be more than 255 long")  String email, Pageable pageable) {
+    public ResponseEntity<Page<TaskDTO>> getTasksByWorkerEmail(
+            @PathVariable @Email(message = "Invalid email format") @Size(max = 255, message = "email can`t be more than 255 long") @Parameter(description = "Email пользователя") String email,
+            Pageable pageable) {
         return ResponseEntity.ok(taskService.getAllWorkerTasks(email, pageable));
     }
 
@@ -143,9 +151,10 @@ public class TaskController {
             description = "Эндпоинт для получения всех задач исполнителя по email с определённым статусом. Возвращает страницу DTO задач пользователя с определённым статусом."
     )
     @GetMapping("/worker/{email}/status")
-    public ResponseEntity<Page<TaskDTO>> getTasksByWorkerEmailAndStatus(@PathVariable @Email(message = "Invalid email format") @Size(max = 255, message = "email can`t be more than 255 long") String email,
-                                                                        @RequestParam TaskStatus status,
-                                                                        Pageable pageable)
+    public ResponseEntity<Page<TaskDTO>> getTasksByWorkerEmailAndStatus(
+            @PathVariable @Email(message = "Invalid email format") @Size(max = 255, message = "email can`t be more than 255 long") @Parameter(description = "Email пользователя") String email,
+            @RequestParam @Parameter(description = "Статус задачи") TaskStatus status,
+            Pageable pageable)
     {
         return ResponseEntity.ok(taskService.getAllWorkerTasksByStatus(email, status, pageable));
     }
@@ -163,8 +172,10 @@ public class TaskController {
             description = "Эндпоинт для получения всех задач исполнителя по email с определённым приоритетом. Возвращает страницу DTO задач пользователя с определённым приоритетом."
     )
     @GetMapping("/worker/{email}/priority")
-    public ResponseEntity<Page<TaskDTO>> getTasksByWorkerEmailAndPriority(@PathVariable @Email(message = "Invalid email format") @Size(max = 255, message = "email can`t be more than 255 long")  String email,
-                                                                          @RequestParam TaskPriority priority, Pageable pageable)
+    public ResponseEntity<Page<TaskDTO>> getTasksByWorkerEmailAndPriority(
+            @PathVariable @Email(message = "Invalid email format") @Size(max = 255, message = "email can`t be more than 255 long") @Parameter(description = "Email пользователя") String email,
+            @RequestParam @Parameter(description = "Приоритет задачи") TaskPriority priority,
+            Pageable pageable)
     {
         return ResponseEntity.ok(taskService.getAllWorkerTasksByPriority(email, priority, pageable));
     }
@@ -183,10 +194,11 @@ public class TaskController {
             description = "Эндпоинт для добавления задачи текущему пользователю. Возвращает DTO новой задачи."
     )
     @PostMapping()
-    public ResponseEntity<TaskDTO> addTask(@RequestHeader("Authorization") String authorizationHeader,
-                                           @Valid @RequestParam @NotEmpty(message = "Title is required") @Size(min = 1, max = 255, message = "Title must be between 1 and 255 characters") String title,
-                                           @RequestParam(name = "comment", required = false, defaultValue = "") @Size(max = 1000, message = "Description must be between 0 and 1000 characters") String comment,
-                                           @RequestParam(name = "priority", required = false, defaultValue = "Low") TaskPriority priority)
+    public ResponseEntity<TaskDTO> addTask(
+            @RequestHeader("Authorization") @Parameter(description = "Заголовок авторизации с JWT токеном") String authorizationHeader,
+            @RequestParam @NotEmpty(message = "Title is required") @Size(min = 1, max = 255, message = "Title must be between 1 and 255 characters") @Parameter(description = "Заголовок задачи") @Schema(minLength = 1, maxLength = 255) String title,
+            @RequestParam(name = "comment", required = false, defaultValue = "") @Size(max = 1000, message = "Description must be between 0 and 1000 characters") @Parameter(description = "Комментарий к задаче") @Schema(maxLength = 1000) String comment,
+            @RequestParam(name = "priority", required = false, defaultValue = "Low") @Parameter(description = "Приоритет задачи") TaskPriority priority)
     {
         String token = extractJwtToken(authorizationHeader);
         if (token == null) return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
@@ -210,10 +222,11 @@ public class TaskController {
             description = "Эндпоинт для изменения заголовка или комментария к задаче по её ID. Возвращает обновленный DTO задачи."
     )
     @PutMapping()
-    public ResponseEntity<TaskDTO> editTask(@RequestHeader("Authorization") String authorizationHeader,
-                                            @RequestParam @NotNull(message = "Task ID is required") @Min(1) Long taskID,
-                                            @RequestParam @NotEmpty(message = "Title is required") @Size(min = 1, max = 255, message = "Title must be between 1 and 255 characters") String title,
-                                            @RequestParam(name = "comment", required = false, defaultValue = "") @Size(max = 1000, message = "Description must be between 0 and 1000 characters") String comment)
+    public ResponseEntity<TaskDTO> editTask(
+            @RequestHeader("Authorization") @Parameter(description = "Заголовок авторизации с JWT токеном") String authorizationHeader,
+            @RequestParam @NotNull(message = "Task ID is required") @Min(1) @Parameter(description = "ID задачи") Long taskID,
+            @RequestParam @NotEmpty(message = "Title is required") @Size(min = 1, max = 255, message = "Title must be between 1 and 255 characters") @Parameter(description = "Новый заголовок задачи") @Schema(minLength = 1, maxLength = 255) String title,
+            @RequestParam(name = "comment", required = false, defaultValue = "") @Size(max = 1000, message = "Description must be between 0 and 1000 characters") @Parameter(description = "Новый комментарий к задаче") @Schema(maxLength = 1000) String comment)
     {
         String token = extractJwtToken(authorizationHeader);
         if (token == null) return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
@@ -235,9 +248,9 @@ public class TaskController {
             description = "Эндпоинт для удаления задачи по её ID. Возвращает сообщение об успешном удалении задачи."
     )
     @DeleteMapping()
-    public ResponseEntity<String> deleteTask(@RequestHeader("Authorization") String authorizationHeader,
-                                             @RequestParam @Min(1) Long taskID)
-
+    public ResponseEntity<String> deleteTask(
+            @RequestHeader("Authorization") @Parameter(description = "Заголовок авторизации с JWT токеном") String authorizationHeader,
+            @RequestParam @Min(1) @Parameter(description = "ID задачи") Long taskID)
     {
         String token = extractJwtToken(authorizationHeader);
         if (token == null) return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
@@ -261,9 +274,10 @@ public class TaskController {
             description = "Эндпоинт для изменения статуса задачи по её ID. Возвращает обновленный DTO задачи."
     )
     @PutMapping("/status")
-    public ResponseEntity<TaskDTO> updateTaskStatus(@RequestHeader("Authorization") String authorizationHeader,
-                                                    @RequestParam @Min(1) Long taskID,
-                                                    @RequestParam TaskStatus status)
+    public ResponseEntity<TaskDTO> updateTaskStatus(
+            @RequestHeader("Authorization") @Parameter(description = "Заголовок авторизации с JWT токеном") String authorizationHeader,
+            @RequestParam @Min(1) @Parameter(description = "ID задачи") Long taskID,
+            @RequestParam @Parameter(description = "Новый статус задачи") TaskStatus status)
     {
         String token = extractJwtToken(authorizationHeader);
         if (token == null) return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
@@ -286,9 +300,10 @@ public class TaskController {
             description = "Эндпоинт для добавления исполнителя к задаче по её ID. Возвращает обновленный DTO задачи."
     )
     @PutMapping("/worker")
-    public ResponseEntity<TaskDTO> addWorker(@RequestHeader("Authorization") String authorizationHeader,
-                                             @RequestParam @Email(message = "Invalid email format") @Size(max = 255, message = "email can`t be more than 255 long")  String email,
-                                             @RequestParam @Min(1) Long taskID)
+    public ResponseEntity<TaskDTO> addWorker(
+            @RequestHeader("Authorization") @Parameter(description = "Заголовок авторизации с JWT токеном") String authorizationHeader,
+            @RequestParam @Email(message = "Invalid email format") @Size(max = 255, message = "email can`t be more than 255 long") @Parameter(description = "Email исполнителя") @Schema(maxLength = 255) String email,
+            @RequestParam @Min(1) @Parameter(description = "ID задачи") Long taskID)
     {
         String token = extractJwtToken(authorizationHeader);
         if (token == null) return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
@@ -311,9 +326,10 @@ public class TaskController {
             description = "Эндпоинт для удаления исполнителя из задачи по её ID. Возвращает обновленный DTO задачи."
     )
     @DeleteMapping("/worker")
-    public ResponseEntity<TaskDTO> removeWorker(@RequestHeader("Authorization") String authorizationHeader,
-                                                @RequestParam @Email(message = "Invalid email format") @Size(max = 255, message = "email can`t be more than 255 long")  String email,
-                                                @RequestParam @Min(1) Long taskID)
+    public ResponseEntity<TaskDTO> removeWorker(
+            @RequestHeader("Authorization") @Parameter(description = "Заголовок авторизации с JWT токеном") String authorizationHeader,
+            @RequestParam @Email(message = "Invalid email format") @Size(max = 255, message = "email can`t be more than 255 long") @Parameter(description = "Email исполнителя") @Schema(maxLength = 255) String email,
+            @RequestParam @Min(1) @Parameter(description = "ID задачи") Long taskID)
     {
         String token = extractJwtToken(authorizationHeader);
         if (token == null) return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
